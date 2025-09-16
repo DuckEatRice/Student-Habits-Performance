@@ -1,0 +1,66 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("student_habits_performance.csv", usecols=['study_hours_per_day', 'exam_score'])
+
+print(df)
+
+X = df['study_hours_per_day'].values
+y = df['exam_score'].values
+
+X_b = np.c_[np.ones(X.shape[0]), X]
+theta = np.random.randn(2, 1)
+y = y.reshape(-1, 1)
+
+learning_rate = 0.01
+n_iterations = 1000
+m = len(y)
+
+cost_history = []
+theta_history = []
+
+for iteration in range(n_iterations):
+    y_predicted = X_b.dot(theta) #this calculates the predictions
+
+    error = y_predicted - y #this calculates the y-hat - actual y,
+
+    gradients = (2/m) * X_b.T.dot(error) #this is the gradient equation
+
+    theta = theta - learning_rate * gradients #this updates the parameters after the calculations
+
+    cost = np.mean(error**2) #this is the calculations for the cost function (mean squared error)
+    cost_history.append(cost)
+    theta_history.append(theta.flatten())
+
+final_intercept = theta[0, 0]
+final_slope = theta[1, 0]
+
+print(f"Starting Parameters (theta_0, theta_1): {theta.flatten()}")
+print(f"Learning Rate: {learning_rate}")
+print(f"Number of Iterations: {n_iterations}")
+initial_y_predicted = X_b.dot(theta)
+initial_error = initial_y_predicted - y
+initial_cost = np.mean(initial_error**2)
+print(f"Starting Cost (MSE): {initial_cost:.4f}\n")
+print(f"Final Intercept (theta_0): {final_intercept:.4f}")
+print(f"Final Slope (theta_1): {final_slope:.4f}")
+print(f"Final Cost (MSE): {cost_history[-1]:.4f}")
+
+plt.figure(figsize=(10, 6)) #This is the size of the graph
+plt.scatter(X, y, label='Actual Exam Scores', alpha=0.7) #creates a specific type of plot, which is a scatter plot
+plt.plot(X, X_b.dot(theta), color='red', label=f'Regression Line: y = {final_slope:.2f}x + {final_intercept:.2f}') #it just plots the graph and its data points
+plt.xlabel("Study Hours Per Day") #this is the label of the graphs
+plt.ylabel("Exam Score") #this is the label of the graphs
+plt.title("Student Exam Scores vs. Study Hours Project") #this is the label of the graphs
+plt.legend() #this is the label of the graphs
+plt.grid(True) #this is the label of the graphs
+plt.show() #this is the label of the graphs
+
+plt.figure(figsize=(10, 6)) #This is the size of the graph
+plt.plot(range(n_iterations), cost_history, color='blue') #it just plots all the data points
+plt.xlabel("Number of Iterations") #this is the label of the graphs
+plt.ylabel("Cost (Mean Squared Error)") #this is the label of the graphs
+plt.title("Cost Function History during Gradient Descent") #this is the label of the graphs
+plt.grid(True) #sets the grid to seeable
+plt.show() #sets the grid to seeable
